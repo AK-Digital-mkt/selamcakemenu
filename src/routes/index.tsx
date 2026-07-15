@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import heroCake from "@/assets/hero-cake.jpg";
 import cakeStrawberry from "@/assets/cake-strawberry.jpg";
 import cakeVanilla from "@/assets/cake-vanilla.jpg";
@@ -9,363 +9,547 @@ import cakeChocolate from "@/assets/cake-chocolate.jpg";
 import cakeCheesecake from "@/assets/cake-cheesecake.jpg";
 
 export const Route = createFileRoute("/")({
-  component: Home,
+  component: DigitalMenu,
 });
 
-const cakes = [
-  { name: "Rose Strawberry Dream", price: "1,200 ETB", tag: "Best Seller", img: cakeStrawberry },
-  { name: "Vanilla Bloom", price: "1,800 ETB", tag: "Signature", img: cakeVanilla },
-  { name: "Mint Pearl Tower", price: "2,400 ETB", tag: "New", img: cakeMint },
-  { name: "Blush Rose Cupcake", price: "150 ETB", tag: "Popular", img: cakeCupcake },
-  { name: "Pink Drip Chocolate", price: "1,500 ETB", tag: "Bestseller", img: cakeChocolate },
-  { name: "Berry Cheesecake", price: "950 ETB", tag: "New", img: cakeCheesecake },
+// ============================================================
+//   SHOP INFO
+// ============================================================
+const SHOP = {
+  name: "Selam",
+  location: "Adama, Ethiopia",
+  phone: "+251 921 109 307",
+  about: "Selam is a boutique cake atelier crafting elegant, handmade cakes and pastries for life's sweetest moments.",
+};
+
+const BANKS = [
+  { id: 1, name: "CBE Birr", number: "1000189273367", display: "Selam Cakes: 1000189273367", icon: "🏦", show: true },
+  { id: 2, name: "Awash Bank", number: "01320123456789", display: "Acct: 01320123456789", icon: "🏛️", show: true },
+  { id: 3, name: "Bank of Abyssinia", number: "12345678901234", display: "Acct: 12345678901234", icon: "🏦", show: true },
 ];
 
-const categories = [
-  { name: "Wedding Cakes", icon: "💍" },
-  { name: "Birthday Cakes", icon: "🎂" },
-  { name: "Cupcakes", icon: "🧁" },
-  { name: "Cheesecakes", icon: "🍰" },
-  { name: "Macarons", icon: "🍬" },
-  { name: "Custom Orders", icon: "✨" },
+const MOBILE_PAY = {
+  telebirr_number: "+251921109307",
+  telebirr_display: "Selam Cakes: +251 921 109 307",
+  show_telebirr: true,
+};
+
+// ============================================================
+//   MENU
+// ============================================================
+type CakeItem = {
+  id: number;
+  cat: "SIGNATURE" | "CUPCAKES" | "CHEESECAKES" | "MACARONS" | "CUSTOM";
+  emoji: string;
+  name: { en: string; am: string; om: string };
+  desc: { en: string; am: string; om: string };
+  price: number;
+  img: string;
+  special?: boolean;
+};
+
+const MENU: CakeItem[] = [
+  { id: 1, cat: "SIGNATURE", emoji: "🌸", special: true,
+    name: { en: "Rose Strawberry Dream", am: "የጽጌረዳ እንጆሪ ኬክ", om: "Keeka Roozii Stroberrii" },
+    desc: { en: "Soft strawberry sponge with rose cream and fresh berries.", am: "ለስላሳ የእንጆሪ ስፖንጅ ከጽጌረዳ ክሬም ጋር.", om: "Keeka stroberrii lallaafaa cream roozii wajjin." },
+    price: 1200, img: cakeStrawberry },
+  { id: 2, cat: "SIGNATURE", emoji: "🤍",
+    name: { en: "Vanilla Bloom", am: "የቫኒላ አበባ", om: "Vaanilaa Daraaraa" },
+    desc: { en: "Two-tier vanilla cake finished with sugar florals.", am: "ባለ ሁለት ደረጃ ቫኒላ ኬክ በስኳር አበቦች.", om: "Keeka vaanilaa sadarkaa lamaa daraaraa sukkaaraa qabu." },
+    price: 1800, img: cakeVanilla },
+  { id: 3, cat: "SIGNATURE", emoji: "🍫",
+    name: { en: "Pink Drip Chocolate", am: "ሮዝ ቸኮሌት", om: "Chokoleetii Roozii" },
+    desc: { en: "Rich chocolate cake with pink ganache drip and blossoms.", am: "ጥልቅ የቸኮሌት ኬክ በሮዝ ጋናሽ.", om: "Keeka chokoleetii dhugaa ganaash roozii qabu." },
+    price: 1500, img: cakeChocolate },
+
+  { id: 4, cat: "CUPCAKES", emoji: "🧁",
+    name: { en: "Blush Rose Cupcake", am: "የጽጌረዳ ኬክ", om: "Keeka Roozii Xiqqaa" },
+    desc: { en: "Vanilla cupcake topped with a pink buttercream rose.", am: "ቫኒላ ኬክ በሮዝ ክሬም.", om: "Cupcake vaanilaa cream roozii wajjin." },
+    price: 150, img: cakeCupcake },
+  { id: 5, cat: "CUPCAKES", emoji: "🍓",
+    name: { en: "Strawberry Cloud", am: "እንጆሪ ደመና", om: "Duumessa Stroberrii" },
+    desc: { en: "Fluffy strawberry cupcake with whipped cream.", am: "ለስላሳ የእንጆሪ ኬክ.", om: "Cupcake stroberrii lallaafaa." },
+    price: 140, img: cakeCupcake },
+  { id: 6, cat: "CUPCAKES", emoji: "💫",
+    name: { en: "Mini Vanilla Delight", am: "ሚኒ ቫኒላ", om: "Vaanilaa Xiqqaa" },
+    desc: { en: "Bite-sized vanilla cupcakes for gifting.", am: "ትንንሽ የቫኒላ ኬኮች.", om: "Cupcake vaanilaa xixiqqaa." },
+    price: 120, img: cakeCupcake },
+
+  { id: 7, cat: "CHEESECAKES", emoji: "🍰",
+    name: { en: "Berry Cheesecake", am: "የቤሪ ቺዝኬክ", om: "Cheesecake Bariiwwan" },
+    desc: { en: "Creamy cheesecake with mixed berry glaze.", am: "ክሬም ቺዝኬክ በተቀላቀሉ ቤሪ.", om: "Cheesecake cream cream barii walmakaa qabu." },
+    price: 950, img: cakeCheesecake },
+  { id: 8, cat: "CHEESECAKES", emoji: "🥭",
+    name: { en: "Classic New York", am: "ኒው ዮርክ ቺዝኬክ", om: "New York Cheesecake" },
+    desc: { en: "Silky-smooth traditional New York cheesecake.", am: "ባህላዊ ኒው ዮርክ ቺዝኬክ.", om: "Cheesecake New York aadaa." },
+    price: 850, img: cakeCheesecake },
+
+  { id: 9, cat: "MACARONS", emoji: "🍬",
+    name: { en: "Mint Pearl Tower", am: "የከበሮ ማካሮን ማማ", om: "Gamoo Makaaroon" },
+    desc: { en: "Pastel macaron tower with edible pearls.", am: "ፓስቴል ማካሮን ማማ.", om: "Gamoo makaaroon paasteel." },
+    price: 2400, img: cakeMint },
+  { id: 10, cat: "MACARONS", emoji: "🌷",
+    name: { en: "Pink Macaron Box", am: "ሮዝ ማካሮን ሳጥን", om: "Saanduqa Makaaroon Roozii" },
+    desc: { en: "Box of 12 handcrafted pink macarons.", am: "12 የሮዝ ማካሮን.", om: "Saanduqa makaaroon roozii 12." },
+    price: 600, img: cakeMint },
+
+  { id: 11, cat: "CUSTOM", emoji: "💍",
+    name: { en: "Wedding Cake — 3 Tier", am: "የሠርግ ኬክ", om: "Keeka Cidhaa" },
+    desc: { en: "Bespoke 3-tier wedding cake, custom flavors & florals.", am: "የሠርግ ኬክ በተመረጠ ጣዕም.", om: "Keeka cidhaa sadarkaa 3." },
+    price: 8500, img: heroCake },
+  { id: 12, cat: "CUSTOM", emoji: "🎂",
+    name: { en: "Birthday Custom", am: "የልደት ኬክ", om: "Keeka Guyyaa Dhalootaa" },
+    desc: { en: "Custom birthday cake designed to your theme.", am: "የተመረጠ የልደት ኬክ.", om: "Keeka guyyaa dhalootaa filatamaa." },
+    price: 2200, img: cakeVanilla },
 ];
 
-const testimonials = [
-  { name: "Hanan A.", text: "Absolutely stunning cakes! The flavors are as beautiful as the design. Selam made my wedding unforgettable.", rating: 5 },
-  { name: "Michael T.", text: "The most elegant boutique bakery in town. Every bite feels like a celebration.", rating: 5 },
-  { name: "Sara K.", text: "Ordered a custom birthday cake — it exceeded all expectations. Pure artistry.", rating: 5 },
-];
+// ============================================================
+//   TRANSLATIONS
+// ============================================================
+type Lang = "en" | "am" | "om";
+const T = {
+  en: {
+    heroTitle: "Selam Cake Shop",
+    heroSub: "Handcrafted with love",
+    heroBadge: "Open today",
+    orderNow: "Order Now",
+    payTitle: "Payment Information",
+    paySub: "Accepted payment methods for your order",
+    payCash: "Cash on delivery",
+    aboutTitle: "About " + SHOP.name,
+    catLabels: { ALL: "All", SIGNATURE: "Signature", CUPCAKES: "Cupcakes", CHEESECAKES: "Cheesecakes", MACARONS: "Macarons", CUSTOM: "Custom" } as Record<string, string>,
+    currency: "Birr", navPay: "Pay", navInfo: "Info", tagline: "Sweetness, delicately made.",
+    copied: "copied!", contact: "Contact us to order",
+  },
+  am: {
+    heroTitle: "ሰላም ኬክ ሱቅ",
+    heroSub: "በእጅ የተሰራ በፍቅር",
+    heroBadge: "ዛሬ ክፍት ነው",
+    orderNow: "አዝዙ",
+    payTitle: "የክፍያ መረጃ",
+    paySub: "ተቀባይነት ያላቸው የክፍያ ዘዴዎች",
+    payCash: "ጥሬ ገንዘብ",
+    aboutTitle: "ስለ ሰላም",
+    catLabels: { ALL: "ሁሉም", SIGNATURE: "ልዩ", CUPCAKES: "ካፕኬኮች", CHEESECAKES: "ቺዝኬኮች", MACARONS: "ማካሮኖች", CUSTOM: "የተመረጠ" } as Record<string, string>,
+    currency: "ብር", navPay: "ክፍያ", navInfo: "መረጃ", tagline: "ጣፋጭነት፣ በጥንቃቄ የተሰራ።",
+    copied: "ተቀድቷል!", contact: "ለማዘዝ ያግኙን",
+  },
+  om: {
+    heroTitle: "Selam Keeka",
+    heroSub: "Harkaan qophaa'e jaalalaan",
+    heroBadge: "Har'a bane",
+    orderNow: "Ajaji",
+    payTitle: "Odeeffannoo Kaffaltii",
+    paySub: "Karaaleen kaffaltii fudhataman",
+    payCash: "Maallaqaan",
+    aboutTitle: "Waa'ee " + SHOP.name,
+    catLabels: { ALL: "Hunda", SIGNATURE: "Addaa", CUPCAKES: "Cupcake", CHEESECAKES: "Cheesecake", MACARONS: "Makaaroon", CUSTOM: "Filatamaa" } as Record<string, string>,
+    currency: "ETB", navPay: "Kaffaltii", navInfo: "Odeeffannoo", tagline: "Miʼaawaa, of eeggannoon.",
+    copied: "kopeeffame!", contact: "Nu quunnamaa",
+  },
+} satisfies Record<Lang, any>;
 
-const features = [
-  { title: "Handcrafted Daily", desc: "Every cake is made fresh by our master pâtissiers.", icon: "🌸" },
-  { title: "Premium Ingredients", desc: "Only the finest butter, chocolate and seasonal fruit.", icon: "✨" },
-  { title: "Custom Designs", desc: "Bespoke creations tailored to your special moments.", icon: "🎨" },
-  { title: "On-Time Delivery", desc: "Fresh from oven to your doorstep, on the dot.", icon: "🚚" },
-];
+// ============================================================
+//   COMPONENT
+// ============================================================
+type ModalKey = "payment" | "about" | null;
 
-function Home() {
+function DigitalMenu() {
+  const [lang, setLang] = useState<Lang>("en");
+  const [activeCat, setActiveCat] = useState<string>("ALL");
+  const [modal, setModal] = useState<ModalKey>(null);
+  const [openItem, setOpenItem] = useState<CakeItem | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [langMenu, setLangMenu] = useState(false);
+  const t = T[lang];
+
+  const categories = useMemo(() => {
+    const seen = new Set<string>();
+    MENU.forEach((m) => seen.add(m.cat));
+    return Array.from(seen);
+  }, []);
+
+  const filtered = useMemo(
+    () => (activeCat === "ALL" ? MENU : MENU.filter((m) => m.cat === activeCat)),
+    [activeCat]
+  );
+
+  function showToast(msg: string) {
+    setToast(msg);
+    window.setTimeout(() => setToast(null), 2200);
+  }
+  async function copy(text: string, label: string) {
+    try { await navigator.clipboard.writeText(text); } catch { /* noop */ }
+    showToast(`${label} ${t.copied}`);
+  }
+
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <Nav />
-      <Hero />
-      <Categories />
-      <FeaturedCakes />
-      <WhyUs />
-      <Testimonials />
-      <Gallery />
-      <Contact />
-      <Footer />
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa] pb-32">
+      <div className="mx-auto max-w-[520px] relative">
+        <Hero t={t} lang={lang} setLang={setLang} langMenu={langMenu} setLangMenu={setLangMenu} />
+
+        <CategoryPills
+          categories={categories}
+          activeCat={activeCat}
+          setActiveCat={setActiveCat}
+          labels={t.catLabels}
+        />
+
+        <MenuList
+          items={filtered}
+          activeCat={activeCat}
+          lang={lang}
+          labels={t.catLabels}
+          currency={t.currency}
+          onOpen={setOpenItem}
+        />
+      </div>
+
+      <BottomNav onNav={(k) => setModal(k)} active={modal} labels={t} />
+
+      {modal === "payment" && (
+        <PaymentModal t={t} onClose={() => setModal(null)} onCopy={copy} />
+      )}
+      {modal === "about" && (
+        <AboutModal t={t} onClose={() => setModal(null)} />
+      )}
+      {openItem && (
+        <ItemModal item={openItem} lang={lang} currency={t.currency} onClose={() => setOpenItem(null)} onOrder={() => { setOpenItem(null); setModal("payment"); }} orderLabel={t.orderNow} />
+      )}
+
+      <Toast msg={toast} />
     </div>
   );
 }
 
-function Nav() {
-  const [open, setOpen] = useState(false);
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <span className="text-3xl">🌸</span>
-          <span className="font-display text-2xl font-semibold tracking-tight">Selam</span>
-        </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-          {["Home", "Cakes", "Categories", "About", "Contact"].map(l => (
-            <a key={l} href={`#${l.toLowerCase()}`} className="relative hover:text-[var(--blush-deep)] transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-[var(--blush-deep)] after:transition-all hover:after:w-full">{l}</a>
-          ))}
-        </nav>
-        <a href="#cakes" className="hidden md:inline-flex btn-primary text-sm">Order Now</a>
-        <button className="md:hidden text-2xl" onClick={() => setOpen(!open)} aria-label="Menu">☰</button>
-      </div>
-      {open && (
-        <div className="md:hidden border-t border-border bg-white/95 backdrop-blur">
-          <div className="px-6 py-4 flex flex-col gap-3">
-            {["Home", "Cakes", "Categories", "About", "Contact"].map(l => (
-              <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setOpen(false)} className="py-1">{l}</a>
-            ))}
-            <a href="#cakes" onClick={() => setOpen(false)} className="btn-primary text-sm text-center">Order Now</a>
-          </div>
-        </div>
-      )}
-    </header>
-  );
-}
+// ============================================================
+//   HERO
+// ============================================================
+function Hero({ t, lang, setLang, langMenu, setLangMenu }: any) {
+  const bgRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onScroll = () => {
+      if (bgRef.current && window.scrollY < 500) {
+        bgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-function Hero() {
   return (
-    <section id="home" className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
-      <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#fadadd] opacity-40 blur-3xl" />
-      <div className="absolute top-40 -right-20 w-96 h-96 rounded-full bg-[#ddf8f8] opacity-50 blur-3xl" />
-      <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-        <div className="animate-fade-up">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-sm font-medium">
-            <span className="w-2 h-2 rounded-full bg-[var(--blush-deep)] animate-pulse" />
-            Handcrafted in Adama, Ethiopia
-          </span>
-          <h1 className="mt-6 text-5xl md:text-7xl font-semibold leading-[1.05]">
-            Sweetness,<br />
-            <span className="italic font-normal bg-gradient-to-r from-[#e89aa3] to-[#8ac5c8] bg-clip-text text-transparent">delicately</span> made.
-          </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-md leading-relaxed">
-            Boutique cakes, cupcakes and pastries — designed with love, baked with the finest ingredients, and finished by hand.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a href="#cakes" className="btn-primary">Order Your Cake</a>
-            <a href="#gallery" className="btn-secondary">View Gallery</a>
-          </div>
-          <div className="mt-12 flex items-center gap-8">
-            <div>
-              <div className="font-display text-3xl font-semibold">10+</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-widest">Years</div>
-            </div>
-            <div className="w-px h-10 bg-border" />
-            <div>
-              <div className="font-display text-3xl font-semibold">5k+</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-widest">Happy Clients</div>
-            </div>
-            <div className="w-px h-10 bg-border" />
-            <div>
-              <div className="font-display text-3xl font-semibold">100%</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-widest">Handmade</div>
-            </div>
-          </div>
+    <section className="relative h-[380px] overflow-hidden">
+      <div ref={bgRef} className="absolute inset-0">
+        <img src={heroCake} alt="Selam signature cake" className="w-full h-full object-cover" />
+      </div>
+      {/* soft rose overlay for legibility */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(250,218,221,0.55) 55%, rgba(221,248,248,0.85) 100%)" }} />
+
+      {/* topbar */}
+      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+        <div className="flex items-center gap-2 glass px-3 py-2 rounded-full">
+          <span className="text-lg">🌸</span>
+          <span className="font-display font-semibold text-sm">Selam</span>
         </div>
-        <div className="relative animate-fade-up" style={{ animationDelay: "0.2s" }}>
-          <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[#fadadd] to-[#ddf8f8] blur-2xl opacity-60" />
-          <div className="relative rounded-[2rem] overflow-hidden shadow-[var(--shadow-elegant)] animate-float">
-            <img src={heroCake} alt="Signature tiered cake" width={1024} height={1024} className="w-full h-auto" />
-          </div>
-          <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-4 shadow-[var(--shadow-soft)] hidden sm:block">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#ddf8f8] flex items-center justify-center text-lg">⭐</div>
-              <div>
-                <div className="font-semibold text-sm">4.9 / 5.0</div>
-                <div className="text-xs text-muted-foreground">2,300+ reviews</div>
-              </div>
+        <div className="relative">
+          <button
+            onClick={() => setLangMenu(!langMenu)}
+            className="glass w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold hover:scale-105 transition-transform"
+            aria-label="Language"
+          >
+            {lang.toUpperCase()}
+          </button>
+          {langMenu && (
+            <div className="absolute right-0 top-12 glass rounded-2xl overflow-hidden shadow-[var(--shadow-soft)] w-32">
+              {(["en", "am", "om"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => { setLang(l); setLangMenu(false); }}
+                  className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[#fadadd]/40 transition-colors ${lang === l ? "bg-[#ddf8f8]/50 font-semibold" : ""}`}
+                >
+                  {l === "en" ? "English" : l === "am" ? "አማርኛ" : "Afaan Oromoo"}
+                </button>
+              ))}
             </div>
-          </div>
+          )}
         </div>
+      </div>
+
+      {/* hero content */}
+      <div className="absolute bottom-8 left-6 right-6 z-10">
+        <div className="inline-flex items-center gap-2 glass px-3.5 py-1.5 rounded-full text-xs font-semibold mb-3">
+          <span className="w-2 h-2 rounded-full bg-[#f5a1ad] animate-pulse shadow-[0_0_10px_#f5a1ad]" />
+          {t.heroBadge}
+        </div>
+        <h1 className="font-display text-4xl md:text-5xl font-semibold leading-[1.05] tracking-tight text-[#2d2029]">
+          {t.heroTitle}
+        </h1>
+        <p className="mt-2 text-sm text-[#5a4a52] font-medium">{t.tagline}</p>
       </div>
     </section>
   );
 }
 
-function Categories() {
+// ============================================================
+//   CATEGORY PILLS
+// ============================================================
+function CategoryPills({ categories, activeCat, setActiveCat, labels }: any) {
   return (
-    <section id="categories" className="py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-14">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--blush-deep)] font-medium">Explore</p>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold">Our Categories</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-          {categories.map((c) => (
-            <div key={c.name} className="group rounded-3xl bg-white border border-border p-6 text-center hover:shadow-[var(--shadow-soft)] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-              <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-3xl transition-colors group-hover:bg-[#ddf8f8]" style={{ background: "#fadadd66" }}>
-                {c.icon}
-              </div>
-              <div className="mt-4 font-medium text-sm">{c.name}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <div className="flex gap-2.5 overflow-x-auto px-4 pt-5 pb-2 no-scrollbar" style={{ scrollbarWidth: "none" }}>
+      <style>{`.no-scrollbar::-webkit-scrollbar{display:none}`}</style>
+      {["ALL", ...categories].map((c) => {
+        const active = activeCat === c;
+        return (
+          <button
+            key={c}
+            onClick={() => setActiveCat(c)}
+            className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex-shrink-0 ${
+              active
+                ? "text-white shadow-[0_6px_18px_-4px_#f5c1c8] scale-[1.03]"
+                : "bg-white text-[#8b6b73] border border-[#f0d5dc] hover:bg-[#ddf8f8]/40"
+            }`}
+            style={active ? { background: "linear-gradient(135deg, #f5a1ad 0%, #e88aab 100%)" } : {}}
+          >
+            {labels[c] || c}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
-function FeaturedCakes() {
+// ============================================================
+//   MENU LIST
+// ============================================================
+function MenuList({ items, activeCat, lang, labels, currency, onOpen }: any) {
+  let lastCat: string | null = null;
   return (
-    <section id="cakes" className="py-20 md:py-28" style={{ background: "var(--gradient-soft)" }}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-6">
-          <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-[var(--blush-deep)] font-medium">Best Sellers</p>
-            <h2 className="mt-3 text-4xl md:text-5xl font-semibold">Featured Cakes</h2>
-          </div>
-          <p className="max-w-sm text-muted-foreground">Our most-loved creations, freshly baked and beautifully finished by hand.</p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {cakes.map((cake) => (
-            <article key={cake.name} className="group rounded-3xl bg-white overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-elegant)] hover:-translate-y-2 transition-all duration-500">
-              <div className="relative aspect-square overflow-hidden">
-                <img src={cake.img} alt={cake.name} loading="lazy" width={1024} height={1024} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur">{cake.tag}</span>
+    <div className="px-4 pt-2 grid grid-cols-2 gap-4">
+      {items.map((item: CakeItem, i: number) => {
+        const showHeading = activeCat === "ALL" && item.cat !== lastCat;
+        if (showHeading) lastCat = item.cat;
+        return (
+          <div key={item.id} className="contents">
+            {showHeading && (
+              <div className="col-span-2 flex items-center gap-2 pt-4 pb-1 text-xs font-bold uppercase tracking-[1.5px] text-[#8b6b73]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#f5a1ad]" />
+                {labels[item.cat] || item.cat}
               </div>
-              <div className="p-6">
-                <h3 className="font-display text-2xl font-semibold">{cake.name}</h3>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full bg-[#ddf8f8] text-sm font-semibold">{cake.price}</span>
-                  <button className="btn-primary text-sm !py-2 !px-5">Order Now</button>
+            )}
+            <article
+              onClick={() => onOpen(item)}
+              className="group bg-white rounded-3xl p-2.5 border border-[#f0d5dc] cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(233,30,99,0.15)] hover:border-[#f5a1ad]/40 animate-fade-up"
+              style={{ animationDelay: `${i * 0.04}s`, animationFillMode: "both" }}
+            >
+              <div className="relative overflow-hidden rounded-2xl aspect-square">
+                <img
+                  src={item.img}
+                  alt={item.name[lang as Lang]}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {item.special ? (
+                  <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-extrabold tracking-[1px] text-white backdrop-blur-sm" style={{ background: "linear-gradient(135deg, #f5a1ad, #e88aab)" }}>
+                    SPECIAL
+                  </span>
+                ) : (
+                  <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold text-[#2d2029] bg-white/85 backdrop-blur-sm">
+                    {item.price}
+                  </span>
+                )}
+              </div>
+              <div className="px-1 pt-3 pb-1 flex flex-col">
+                <div className="text-[14px] font-bold leading-tight text-[#2d2029] line-clamp-2">
+                  <span className="mr-1">{item.emoji}</span>{item.name[lang as Lang]}
+                </div>
+                <div className="text-[11px] text-[#8b6b73] mt-1.5 leading-snug line-clamp-2">{item.desc[lang as Lang]}</div>
+                <div className="mt-2.5 flex items-center justify-between">
+                  <div className="text-[15px] font-extrabold text-[#2d2029]">
+                    <span className="text-[11px] font-bold text-[#8b6b73] mr-1">{currency}</span>{item.price}
+                  </div>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm shadow-[0_6px_14px_-4px_#f5c1c8] group-hover:scale-110 transition-transform" style={{ background: "linear-gradient(135deg, #f5a1ad, #e88aab)" }}>
+                    →
+                  </span>
                 </div>
               </div>
             </article>
-          ))}
-        </div>
-      </div>
-    </section>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-function WhyUs() {
+// ============================================================
+//   BOTTOM NAV
+// ============================================================
+function BottomNav({ onNav, active, labels }: any) {
+  const btn = (key: "payment" | "about", icon: string, label: string) => (
+    <button
+      onClick={() => onNav(key)}
+      className={`relative flex flex-col items-center justify-center gap-1 px-5 h-14 min-w-[64px] rounded-2xl transition-all ${
+        active === key ? "text-[#e88aab] bg-[#fadadd]/40" : "text-[#8b6b73] hover:text-[#2d2029]"
+      }`}
+      aria-label={label}
+    >
+      <span className="text-xl">{icon}</span>
+      <span className={`text-[9px] font-semibold uppercase tracking-wider ${active === key ? "opacity-100" : "opacity-70"}`}>{label}</span>
+    </button>
+  );
+
   return (
-    <section id="about" className="py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-14">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--blush-deep)] font-medium">Why Selam</p>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold">A slice of perfection</h2>
+    <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 glass rounded-[28px] px-4 py-2 flex items-center gap-2 shadow-[0_12px_36px_-8px_rgba(233,30,99,0.25)]">
+      {btn("payment", "💳", labels.navPay)}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_8px_24px_-4px_rgba(233,30,99,0.5)] hover:scale-110 hover:-translate-y-1 transition-all relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #f5a1ad 0%, #e88aab 100%)" }}
+        aria-label="Home"
+      >
+        <span className="relative z-10">🏠</span>
+      </button>
+      {btn("about", "ℹ️", labels.navInfo)}
+    </nav>
+  );
+}
+
+// ============================================================
+//   MODAL SHELL + MODALS
+// ============================================================
+function Modal({ children, onClose }: any) {
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onEsc);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onEsc); document.body.style.overflow = ""; };
+  }, [onClose]);
+
+  return (
+    <div
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-up"
+      style={{ animationDuration: "0.25s" }}
+    >
+      <div className="w-full sm:max-w-[480px] sm:mb-6 bg-white rounded-t-[28px] sm:rounded-[28px] border border-[#f0d5dc] shadow-[0_-8px_40px_rgba(233,30,99,0.15)] max-h-[90vh] overflow-y-auto animate-fade-up">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function PaymentModal({ t, onClose, onCopy }: any) {
+  return (
+    <Modal onClose={onClose}>
+      <div className="p-7 pb-10 relative">
+        <button onClick={onClose} className="absolute top-5 right-5 w-9 h-9 rounded-full bg-[#f8e1e7] hover:bg-[#f5a1ad] hover:text-white text-[#8b6b73] flex items-center justify-center transition-colors">✕</button>
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 bg-[#fadadd]/50 border border-[#f5a1ad]/30">💳</div>
+        <h2 className="font-display text-2xl font-bold text-[#2d2029]">{t.payTitle}</h2>
+        <p className="text-sm text-[#8b6b73] mt-1.5 mb-6 leading-relaxed">{t.paySub}</p>
+
+        <div className="space-y-3">
+          {BANKS.filter(b => b.show).map((b) => (
+            <button
+              key={b.id}
+              onClick={() => onCopy(b.number, b.name)}
+              className="w-full flex items-center justify-between gap-3 bg-[#fef5f7] hover:bg-[#ddf8f8]/40 border border-transparent hover:border-[#f5a1ad]/30 rounded-2xl p-4 transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{b.icon}</span>
+                <div>
+                  <div className="text-sm font-semibold text-[#2d2029]">{b.name}</div>
+                  <div className="text-xs text-[#8b6b73]">{b.display}</div>
+                </div>
+              </div>
+              <span className="text-[#e88aab] text-lg">📋</span>
+            </button>
+          ))}
+
+          {MOBILE_PAY.show_telebirr && (
+            <button
+              onClick={() => onCopy(MOBILE_PAY.telebirr_number, "Telebirr")}
+              className="w-full flex items-center justify-between gap-3 bg-[#fef5f7] hover:bg-[#ddf8f8]/40 border border-transparent hover:border-[#f5a1ad]/30 rounded-2xl p-4 transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📱</span>
+                <div>
+                  <div className="text-sm font-semibold text-[#2d2029]">Telebirr</div>
+                  <div className="text-xs text-[#8b6b73]">{MOBILE_PAY.telebirr_display}</div>
+                </div>
+              </div>
+              <span className="text-[#e88aab] text-lg">📋</span>
+            </button>
+          )}
+
+          <div className="flex items-center gap-3 bg-[#fef5f7] rounded-2xl p-4">
+            <span className="text-2xl">💵</span>
+            <span className="text-sm font-semibold text-[#2d2029]">{t.payCash}</span>
+          </div>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((f) => (
-            <div key={f.title} className="rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300" style={{ background: "var(--gradient-blush)" }}>
-              <div className="text-4xl mb-4">{f.icon}</div>
-              <h3 className="font-display text-xl font-semibold">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-              <div className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full bg-white/40 blur-2xl group-hover:bg-[#ddf8f8]/60 transition-colors" />
+      </div>
+    </Modal>
+  );
+}
+
+function AboutModal({ t, onClose }: any) {
+  return (
+    <Modal onClose={onClose}>
+      <div className="p-7 pb-10 relative">
+        <button onClick={onClose} className="absolute top-5 right-5 w-9 h-9 rounded-full bg-[#f8e1e7] hover:bg-[#f5a1ad] hover:text-white text-[#8b6b73] flex items-center justify-center transition-colors">✕</button>
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 bg-[#ddf8f8] border border-[#a0dcdc]/40">🌸</div>
+        <h2 className="font-display text-2xl font-bold text-[#2d2029]">{t.aboutTitle}</h2>
+        <p className="text-sm text-[#8b6b73] mt-1.5 mb-6 leading-relaxed">{SHOP.about}</p>
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 bg-[#fef5f7] rounded-2xl p-4">
+            <span className="text-2xl">📍</span>
+            <span className="text-sm font-medium text-[#2d2029]">{SHOP.location}</span>
+          </div>
+          <a href={`tel:${SHOP.phone}`} className="flex items-center gap-3 bg-[#fef5f7] hover:bg-[#ddf8f8]/40 rounded-2xl p-4 transition-colors">
+            <span className="text-2xl">📞</span>
+            <span className="text-sm font-medium text-[#2d2029]">{SHOP.phone}</span>
+          </a>
+          <a href={`https://wa.me/${SHOP.phone.replace(/[^\d]/g, "")}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 bg-[#fef5f7] hover:bg-[#ddf8f8]/40 rounded-2xl p-4 transition-colors">
+            <span className="text-2xl">💬</span>
+            <span className="text-sm font-medium text-[#2d2029]">WhatsApp — {t.contact}</span>
+          </a>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function ItemModal({ item, lang, currency, onClose, onOrder, orderLabel }: any) {
+  return (
+    <Modal onClose={onClose}>
+      <div className="relative">
+        <button onClick={onClose} className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm">✕</button>
+        <img src={item.img} alt={item.name[lang]} className="w-full h-64 object-cover" />
+        <div className="p-7 pb-10">
+          <h2 className="font-display text-2xl font-bold text-[#2d2029]">
+            <span className="mr-1">{item.emoji}</span>{item.name[lang]}
+          </h2>
+          <p className="text-[15px] text-[#8b6b73] mt-2.5 mb-5 leading-relaxed">{item.desc[lang]}</p>
+          <div className="flex items-center justify-between gap-4">
+            <div className="font-display text-3xl font-extrabold" style={{ color: "#e88aab" }}>
+              {item.price} <span className="text-base font-bold text-[#8b6b73]">{currency}</span>
             </div>
-          ))}
+            <button onClick={onOrder} className="btn-primary text-sm">{orderLabel}</button>
+          </div>
         </div>
       </div>
-    </section>
+    </Modal>
   );
 }
 
-function Testimonials() {
+function Toast({ msg }: { msg: string | null }) {
   return (
-    <section className="py-20 md:py-28" style={{ background: "var(--gradient-mist)" }}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-14">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--blush-deep)] font-medium">Kind Words</p>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold">Loved by our customers</h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t) => (
-            <blockquote key={t.name} className="rounded-3xl bg-white p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-elegant)] transition-shadow">
-              <div className="flex gap-1 text-[#f5c1c8]">{"★".repeat(t.rating)}</div>
-              <p className="mt-4 text-foreground leading-relaxed italic">"{t.text}"</p>
-              <footer className="mt-6 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#fadadd] to-[#ddf8f8] flex items-center justify-center font-semibold">{t.name[0]}</div>
-                <cite className="not-italic font-medium text-sm">{t.name}</cite>
-              </footer>
-            </blockquote>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Gallery() {
-  const imgs = [cakeStrawberry, cakeVanilla, cakeMint, cakeCupcake, cakeChocolate, cakeCheesecake];
-  return (
-    <section id="gallery" className="py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-14">
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--blush-deep)] font-medium">@selamcakes</p>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold">From our kitchen</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {imgs.map((img, i) => (
-            <a key={i} href="#" className="group relative aspect-square rounded-2xl overflow-hidden">
-              <img src={img} alt="Selam cake" loading="lazy" width={512} height={512} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#fadadd]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
-                <span className="text-white text-2xl">♡</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Contact() {
-  return (
-    <section id="contact" className="py-20 md:py-28" style={{ background: "var(--gradient-soft)" }}>
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12">
-        <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[var(--blush-deep)] font-medium">Get in touch</p>
-          <h2 className="mt-3 text-4xl md:text-5xl font-semibold">Order or say hello</h2>
-          <p className="mt-4 text-muted-foreground max-w-md">Reach us for custom orders, event cakes or just to chat about your dream design.</p>
-          <div className="mt-8 space-y-4">
-            {[
-              { icon: "📍", label: "Adama, Ethiopia" },
-              { icon: "📞", label: "+251 921 109 307" },
-              { icon: "✉️", label: "hello@selamcakes.et" },
-              { icon: "🕐", label: "Mon–Sun · 8:00 – 21:00" },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-[var(--shadow-soft)]">
-                <div className="w-12 h-12 rounded-xl bg-[#fadadd]/40 flex items-center justify-center text-xl">{item.icon}</div>
-                <span className="font-medium">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <form className="rounded-3xl bg-white p-8 shadow-[var(--shadow-elegant)]">
-          <h3 className="font-display text-2xl font-semibold">Custom Order</h3>
-          <div className="mt-6 space-y-4">
-            <input placeholder="Your name" className="w-full rounded-2xl border border-border bg-[#fef8f9] px-5 py-3.5 outline-none focus:border-[var(--blush-deep)] transition-colors" />
-            <input placeholder="Phone or email" className="w-full rounded-2xl border border-border bg-[#fef8f9] px-5 py-3.5 outline-none focus:border-[var(--blush-deep)] transition-colors" />
-            <input placeholder="Occasion (birthday, wedding…)" className="w-full rounded-2xl border border-border bg-[#fef8f9] px-5 py-3.5 outline-none focus:border-[var(--blush-deep)] transition-colors" />
-            <textarea rows={4} placeholder="Tell us about your dream cake…" className="w-full rounded-2xl border border-border bg-[#fef8f9] px-5 py-3.5 outline-none focus:border-[var(--blush-deep)] transition-colors resize-none" />
-            <button type="button" className="btn-primary w-full">Send Request</button>
-          </div>
-        </form>
-      </div>
-      <div className="max-w-7xl mx-auto px-6 mt-16">
-        <div className="rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] h-80">
-          <iframe
-            title="Selam Cake Shop location"
-            src="https://www.google.com/maps?q=Adama,Ethiopia&output=embed"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="py-14 border-t border-border">
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
-        <div className="md:col-span-2">
-          <div className="flex items-center gap-2">
-            <span className="text-3xl">🌸</span>
-            <span className="font-display text-2xl font-semibold">Selam</span>
-          </div>
-          <p className="mt-4 text-sm text-muted-foreground max-w-xs">Boutique cake atelier crafting elegant, handmade cakes for life's sweetest moments.</p>
-          <div className="mt-6 flex gap-3">
-            {["Instagram", "Facebook", "TikTok"].map(s => (
-              <a key={s} href="#" className="w-10 h-10 rounded-full bg-[#fadadd]/40 hover:bg-[#ddf8f8] flex items-center justify-center text-sm transition-colors" aria-label={s}>{s[0]}</a>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h4 className="font-semibold mb-4">Explore</h4>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><a href="#cakes" className="hover:text-foreground">Cakes</a></li>
-            <li><a href="#categories" className="hover:text-foreground">Categories</a></li>
-            <li><a href="#gallery" className="hover:text-foreground">Gallery</a></li>
-            <li><a href="#about" className="hover:text-foreground">About</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-semibold mb-4">Payment</h4>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>CBE Birr</li>
-            <li>Awash Bank</li>
-            <li>Telebirr</li>
-            <li>Cash on delivery</li>
-          </ul>
-        </div>
-      </div>
-      <div className="max-w-7xl mx-auto px-6 mt-10 pt-6 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-between gap-2">
-        <span>© {new Date().getFullYear()} Selam Cake Shop. Baked with love.</span>
-        <span>Adama, Ethiopia</span>
-      </div>
-    </footer>
+    <div
+      className={`fixed bottom-28 left-1/2 -translate-x-1/2 z-[300] px-6 py-3 rounded-full text-white font-bold text-sm flex items-center gap-2 shadow-[0_12px_28px_-6px_rgba(233,30,99,0.5)] transition-all duration-300 ${
+        msg ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none"
+      }`}
+      style={{ background: "linear-gradient(135deg, #f5a1ad 0%, #e88aab 100%)" }}
+    >
+      <span>✓</span>
+      <span>{msg}</span>
+    </div>
   );
 }
