@@ -74,7 +74,7 @@ function AdminLayout() {
           {nav.map((n) => (
             <Link
               key={n.to}
-              to={n.to}
+              to={n.to as any}
               activeOptions={n.exact ? { exact: true } : undefined}
               activeProps={{ className: "bg-gradient-to-r from-[#fadadd] to-[#ddf8f8] text-[#2d2029] font-semibold" }}
               inactiveProps={{ className: "text-[#8b6b73] hover:bg-[#fef5f7]" }}
@@ -101,7 +101,7 @@ function AdminLayout() {
       {mobileNav && (
         <div className="lg:hidden fixed top-16 inset-x-0 z-30 bg-white border-b border-[#f0d5dc] p-4 space-y-1 animate-fade-up">
           {nav.map((n) => (
-            <Link key={n.to} to={n.to} activeOptions={n.exact ? { exact: true } : undefined}
+            <Link key={n.to} to={n.to as any} activeOptions={n.exact ? { exact: true } : undefined}
               activeProps={{ className: "bg-[#fadadd]/50 font-semibold" }}
               className="flex items-center gap-3 px-4 py-2.5 rounded-2xl text-[#2d2029]">
               <span>{n.icon}</span><span className="text-sm">{n.label}</span>
