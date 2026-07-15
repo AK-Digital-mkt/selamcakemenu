@@ -205,7 +205,7 @@ function DigitalMenu() {
         />
       </div>
 
-      <BottomNav onNav={(k) => setModal(k)} active={modal} labels={t} />
+      <BottomNav onNav={(k: ModalKey) => setModal(k)} active={modal} labels={t} />
 
       {modal === "payment" && (
         <PaymentModal t={t} onClose={() => setModal(null)} onCopy={copy} />
