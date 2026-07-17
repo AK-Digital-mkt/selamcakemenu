@@ -41,6 +41,23 @@ function ProductsAdmin() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
   });
 
+  const toggleAvailability = useMutation({
+    mutationFn: async ({ id, available }: { id: string; available: boolean }) => {
+      const { error } = await supabase.from("products").update({ available }).eq("id", id);
+      if (error) throw error;
+    },
+    onMutate: async ({ id, available }) => {
+      await qc.cancelQueries({ queryKey: ["products"] });
+      const prev = qc.getQueryData<Product[]>(["products"]);
+      qc.setQueryData<Product[]>(["products"], (old) =>
+        (old ?? []).map((p) => (p.id === id ? { ...p, available } : p))
+      );
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => { if (ctx?.prev) qc.setQueryData(["products"], ctx.prev); },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["products"] }),
+  });
+
   const filtered = (products.data ?? [])
     .filter((p) => (filterCat === "all" ? true : p.category_id === filterCat))
     .filter((p) => (search ? p.name.toLowerCase().includes(search.toLowerCase()) : true))
