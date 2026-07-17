@@ -44,7 +44,7 @@ function Overview() {
           <ul className="mt-4 space-y-2">
             {(products.data ?? []).slice(0, 5).map((p) => (
               <li key={p.id} className="flex items-center justify-between text-sm py-2 border-b border-[#faf0f2] last:border-0">
-                <span className="flex items-center gap-2 truncate"><span>{p.emoji}</span><span className="truncate">{p.name}</span></span>
+                <span className="truncate">{p.name}</span>
                 <span className="text-[#8b6b73] shrink-0">{p.price} Birr</span>
               </li>
             ))}
