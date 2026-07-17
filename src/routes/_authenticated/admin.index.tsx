@@ -56,7 +56,7 @@ function Overview() {
           <ul className="mt-4 space-y-2">
             {(pays.data ?? []).map((m) => (
               <li key={m.id} className="flex items-center justify-between text-sm py-2 border-b border-[#faf0f2] last:border-0">
-                <span className="flex items-center gap-2"><span>{m.icon}</span>{m.name}</span>
+                <span>{m.name}</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${m.enabled ? "bg-[#ddf8f8] text-[#2a6b6b]" : "bg-[#faf0f2] text-[#8b6b73]"}`}>{m.enabled ? "Active" : "Disabled"}</span>
               </li>
             ))}
