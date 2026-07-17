@@ -67,7 +67,7 @@ function AuthPage() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: "linear-gradient(135deg, #ffffff 0%, #fef5f7 50%, #ddf8f8 100%)" }}>
       <div className="w-full max-w-md">
         <Link to="/" className="flex items-center justify-center gap-2 mb-8 group">
-          <span className="text-4xl group-hover:scale-110 transition-transform">🌸</span>
+          <img src="/__l5e/assets-v1/e7c6d342-2ac9-4439-8921-b15eb5a18f8b/logo.ico" alt="" className="w-10 h-10 group-hover:scale-110 transition-transform rounded" />
           <span className="font-display text-3xl font-semibold text-[#2d2029]">Selam</span>
         </Link>
 
