@@ -135,7 +135,7 @@ function SettingsAdmin() {
               <Field label="Hero image">
                 <div className="flex items-center gap-4">
                   <div className="w-32 h-32 rounded-2xl overflow-hidden bg-[#fef5f7] border border-[#f0d5dc] shrink-0">
-                    {heroPreview ? <img src={heroPreview} alt="hero" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-3xl">🌸</div>}
+                    {heroPreview ? <img src={heroPreview} alt="hero" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] uppercase tracking-wider text-[#b39aa1]">No image</div>}
                   </div>
                   <label className="flex-1 rounded-2xl border-2 border-dashed border-[#f0d5dc] p-4 text-center cursor-pointer hover:border-[#f5a1ad] text-sm text-[#8b6b73]">
                     <input type="file" accept="image/*" onChange={handleHeroFile} className="hidden" />
