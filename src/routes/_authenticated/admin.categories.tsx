@@ -115,21 +115,14 @@ function CategoryForm({ category, onClose, onSaved }: { category: Category | nul
       <form onSubmit={submit} className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 border border-[#f0d5dc] shadow-[var(--shadow-elegant)]">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display text-xl font-bold">{category ? "Edit" : "New"} category</h2>
-          <button type="button" onClick={onClose} className="w-9 h-9 rounded-full bg-[#faf0f2]">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close" className="w-9 h-9 rounded-full bg-[#faf0f2]">×</button>
         </div>
         <div className="space-y-4">
-          <div className="grid grid-cols-[80px_1fr] gap-3">
-            <div>
-              <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Icon</label>
-              <input value={values.icon} onChange={(e) => setValues({ ...values, icon: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-3 py-3 text-center text-xl outline-none focus:border-[#f5a1ad]" />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Name</label>
-              <input required value={values.name}
-                onChange={(e) => setValues({ ...values, name: e.target.value, slug: values.slug || e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") })}
-                className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-4 py-3 outline-none focus:border-[#f5a1ad]" />
-            </div>
+          <div>
+            <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Name</label>
+            <input required value={values.name}
+              onChange={(e) => setValues({ ...values, name: e.target.value, slug: values.slug || e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") })}
+              className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-4 py-3 outline-none focus:border-[#f5a1ad]" />
           </div>
           <div>
             <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Slug</label>
