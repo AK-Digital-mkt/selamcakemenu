@@ -169,7 +169,7 @@ function SettingsAdmin() {
           )}
 
           {error && <div className="text-sm text-red-700 bg-red-50 rounded-xl px-4 py-2 border border-red-200">{error}</div>}
-          {ok && <div className="text-sm text-green-700 bg-green-50 rounded-xl px-4 py-2 border border-green-200">✓ Saved</div>}
+          {ok && <div className="text-sm text-green-700 bg-green-50 rounded-xl px-4 py-2 border border-green-200">Saved</div>}
 
           <div className="flex justify-end pt-2">
             <button type="submit" disabled={saving} className="btn-primary text-sm disabled:opacity-60">{saving ? "Saving…" : "Save changes"}</button>
