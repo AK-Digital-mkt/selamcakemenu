@@ -259,17 +259,10 @@ function ProductForm({ product, categories, onClose, onSaved }: {
         </div>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-[80px_1fr] gap-3">
-            <div>
-              <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Emoji</label>
-              <input value={values.emoji} onChange={(e) => setValues({ ...values, emoji: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-3 py-3 text-center text-xl outline-none focus:border-[#f5a1ad]" />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Name</label>
-              <input required value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-4 py-3 outline-none focus:border-[#f5a1ad]" />
-            </div>
+          <div>
+            <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Name</label>
+            <input required value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })}
+              className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-4 py-3 outline-none focus:border-[#f5a1ad]" />
           </div>
 
           <div>
