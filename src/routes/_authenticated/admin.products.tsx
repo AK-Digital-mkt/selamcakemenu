@@ -292,7 +292,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Image</label>
             <div className="mt-1.5 flex items-center gap-4">
               <div className="w-24 h-24 rounded-2xl bg-[#fef5f7] border border-[#f0d5dc] flex items-center justify-center overflow-hidden shrink-0">
-                {preview ? <img src={preview} alt="preview" className="w-full h-full object-cover" /> : <span className="text-2xl">{values.emoji}</span>}
+                {preview ? <img src={preview} alt="preview" className="w-full h-full object-cover" /> : <span className="text-[10px] uppercase tracking-wider text-[#b39aa1]">No image</span>}
               </div>
               <label className="flex-1 rounded-2xl border-2 border-dashed border-[#f0d5dc] p-4 text-center cursor-pointer hover:border-[#f5a1ad] transition-colors">
                 <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile} className="hidden" />
