@@ -255,7 +255,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
       <form onSubmit={handleSave} className="w-full max-w-lg bg-white rounded-3xl shadow-[var(--shadow-elegant)] p-6 sm:p-8 my-8 border border-[#f0d5dc]">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display text-2xl font-bold text-[#2d2029]">{product ? "Edit product" : "New product"}</h2>
-          <button type="button" onClick={onClose} className="w-9 h-9 rounded-full bg-[#faf0f2] hover:bg-[#f5a1ad] hover:text-white transition-colors">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close" className="w-9 h-9 rounded-full bg-[#faf0f2] hover:bg-[#f5a1ad] hover:text-white transition-colors">×</button>
         </div>
 
         <div className="space-y-4">
