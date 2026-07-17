@@ -54,7 +54,7 @@ function PaymentsAdmin() {
       <div className="grid gap-3">
         {(pays.data ?? []).map((m) => (
           <div key={m.id} className="bg-white rounded-3xl p-4 border border-[#f0d5dc] flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#fef5f7] flex items-center justify-center text-xl shrink-0">{m.icon}</div>
+            <div className="w-12 h-12 rounded-2xl bg-[#fef5f7] flex items-center justify-center shrink-0 text-[10px] font-bold uppercase tracking-wider text-[#8b6b73]">{m.type}</div>
             <div className="min-w-0 flex-1">
               <div className="font-semibold text-[#2d2029] truncate">{m.name}</div>
               <div className="text-xs text-[#8b6b73] truncate">{m.type} · {m.account_name} {m.account_number && `— ${m.account_number}`}</div>
@@ -113,20 +113,13 @@ function PaymentForm({ method, onClose, onSaved }: { method: PaymentMethod | nul
       <form onSubmit={submit} className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 border border-[#f0d5dc] shadow-[var(--shadow-elegant)] my-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display text-xl font-bold">{method ? "Edit" : "New"} payment</h2>
-          <button type="button" onClick={onClose} className="w-9 h-9 rounded-full bg-[#faf0f2]">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close" className="w-9 h-9 rounded-full bg-[#faf0f2]">×</button>
         </div>
         <div className="space-y-4">
-          <div className="grid grid-cols-[80px_1fr] gap-3">
-            <div>
-              <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Icon</label>
-              <input value={values.icon} onChange={(e) => setValues({ ...values, icon: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-3 py-3 text-center text-xl outline-none focus:border-[#f5a1ad]" />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Name</label>
-              <input required value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-4 py-3 outline-none focus:border-[#f5a1ad]" />
-            </div>
+          <div>
+            <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Name</label>
+            <input required value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })}
+              className="mt-1.5 w-full rounded-2xl border border-[#f0d5dc] px-4 py-3 outline-none focus:border-[#f5a1ad]" />
           </div>
           <div>
             <label className="text-xs font-semibold text-[#8b6b73] uppercase tracking-wider">Type</label>
