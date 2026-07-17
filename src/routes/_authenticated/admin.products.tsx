@@ -106,27 +106,48 @@ function ProductsAdmin() {
           const cat = cats.data?.find((c) => c.id === p.category_id);
           const url = imageUrl(p.image_url);
           return (
-            <article key={p.id} className="bg-white rounded-3xl overflow-hidden border border-[#f0d5dc] shadow-[0_8px_24px_-16px_rgba(233,30,99,0.15)]">
+            <article key={p.id} className={`bg-white rounded-3xl overflow-hidden border border-[#f0d5dc] shadow-[0_8px_24px_-16px_rgba(233,30,99,0.15)] ${!p.available ? "opacity-75" : ""}`}>
               <div className="aspect-video bg-[#fef5f7] relative">
                 {url ? (
-                  <img src={url} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
+                  <img src={url} alt={p.name} loading="lazy" className={`w-full h-full object-cover ${!p.available ? "grayscale-[0.4]" : ""}`} />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl">{p.emoji}</div>
+                  <div className="w-full h-full flex items-center justify-center text-[#8b6b73] text-xs font-semibold uppercase tracking-wider">No image</div>
                 )}
                 <div className="absolute top-2 left-2 flex gap-1">
                   {p.featured && <span className="px-2 py-0.5 rounded-full bg-white/90 text-[10px] font-bold">FEATURED</span>}
-                  {!p.available && <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">HIDDEN</span>}
+                  {!p.available && <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold">SOLD OUT</span>}
                 </div>
               </div>
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-[#2d2029] truncate">{p.emoji} {p.name}</h3>
+                    <h3 className="font-semibold text-[#2d2029] truncate">{p.name}</h3>
                     <p className="text-xs text-[#8b6b73] truncate">{cat?.name ?? "Uncategorized"}</p>
                   </div>
                   <span className="font-bold text-[#e88aab] shrink-0">{p.price} Birr</span>
                 </div>
-                <div className="mt-4 flex gap-2">
+
+                <div className="mt-4 flex items-center justify-between gap-2 rounded-2xl bg-[#faf5f6] px-3 py-2">
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#8b6b73]">Availability</div>
+                    <div className={`text-xs font-semibold ${p.available ? "text-emerald-700" : "text-red-600"}`}>
+                      {p.available ? "Available" : "Sold Out"}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={p.available}
+                    disabled={toggleAvailability.isPending}
+                    onClick={() => toggleAvailability.mutate({ id: p.id, available: !p.available })}
+                    className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${p.available ? "bg-emerald-500" : "bg-gray-300"}`}
+                    aria-label={`Toggle availability for ${p.name}`}
+                  >
+                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform ${p.available ? "translate-x-[22px]" : "translate-x-0.5"} self-center`} />
+                  </button>
+                </div>
+
+                <div className="mt-3 flex gap-2">
                   <button onClick={() => { setEditing(p); setShowForm(true); }} className="flex-1 rounded-full py-2 text-xs font-semibold bg-[#ddf8f8]/60 hover:bg-[#ddf8f8] transition-colors">Edit</button>
                   <button onClick={() => { if (confirm(`Delete "${p.name}"?`)) del.mutate(p.id); }} className="rounded-full py-2 px-3 text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 transition-colors">Delete</button>
                 </div>
