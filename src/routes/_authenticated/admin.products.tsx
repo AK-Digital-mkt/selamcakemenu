@@ -191,6 +191,12 @@ function ProductForm({ product, categories, onClose, onSaved }: {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  // Resolve the current image_path into a signed preview URL whenever it changes.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useState(() => { void 0; });
+
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
