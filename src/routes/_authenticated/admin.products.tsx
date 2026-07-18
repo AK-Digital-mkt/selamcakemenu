@@ -104,7 +104,7 @@ function ProductsAdmin() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((p) => {
           const cat = cats.data?.find((c) => c.id === p.category_id);
-          const url = imageUrl(p.image_url);
+          const url = p.image_display_url ?? null;
           return (
             <article key={p.id} className={`bg-white rounded-3xl overflow-hidden border border-[#f0d5dc] shadow-[0_8px_24px_-16px_rgba(233,30,99,0.15)] ${!p.available ? "opacity-75" : ""}`}>
               <div className="aspect-video bg-[#fef5f7] relative">
