@@ -105,11 +105,9 @@ function SettingsAdmin() {
     const path = await uploadProductImage(file);
     set("hero_image_url", path);
   }
-
-
-
-
+  return (
     <div>
+
       <h1 className="font-display text-3xl md:text-4xl font-bold text-[#2d2029]">Site settings</h1>
       <p className="mt-1 text-sm text-[#8b6b73]">Every change here updates the public site instantly.</p>
 
