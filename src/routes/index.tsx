@@ -197,7 +197,8 @@ function MenuList({ items, activeCat, categories, onOpen }: {
       {items.map((item, i) => {
         const showHeading = activeCat === "ALL" && item.category_id !== lastCat;
         if (showHeading) lastCat = item.category_id;
-        const url = imageUrl(item.image_url) ?? cakeFallback;
+        const url = item.image_display_url ?? fallbackFor(item);
+
         const soldOut = !item.available;
         return (
           <div key={item.id} className="contents">
