@@ -370,11 +370,19 @@ function AboutModal({ settings, onClose }: any) {
           {phoneClean && <Row label="WhatsApp" text={s.whatsapp ?? s.phone} href={`https://wa.me/${phoneClean}`} />}
           {socials.map((sc) => <Row key={sc.key} label={sc.label} text={sc.label} href={s[sc.key]} />)}
         </div>
+        {(() => {
+          const embed = buildMapEmbed(s.maps_url, s.address);
+          if (!embed) return null;
+          return (
+            <div className="mt-5 rounded-2xl overflow-hidden h-48 border border-[#f0d5dc]">
+              <iframe title="Location" src={embed} width="100%" height="100%" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            </div>
+          );
+        })()}
         {s.maps_url && (
-          <div className="mt-5 rounded-2xl overflow-hidden h-48 border border-[#f0d5dc]">
-            <iframe title="Location" src={s.maps_url} width="100%" height="100%" style={{ border: 0 }} loading="lazy" />
-          </div>
+          <a href={s.maps_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex text-xs font-bold uppercase tracking-wider text-[#e88aab] hover:underline">Open in Google Maps →</a>
         )}
+
       </div>
     </ModalShell>
   );
