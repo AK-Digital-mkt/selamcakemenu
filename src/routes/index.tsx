@@ -2,15 +2,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import heroFallback from "@/assets/hero-cake.jpg";
-import cakeFallback from "@/assets/cake-strawberry.jpg";
-import logoAsset from "@/assets/logo.ico.asset.json";
+import cakeStrawberry from "@/assets/cake-strawberry.jpg";
+import cakeVanilla from "@/assets/cake-vanilla.jpg";
+import cakeMint from "@/assets/cake-mint.jpg";
+import cakeCupcake from "@/assets/cake-cupcake.jpg";
+import cakeChocolate from "@/assets/cake-chocolate.jpg";
+import cakeCheesecake from "@/assets/cake-cheesecake.jpg";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchCategories,
   fetchPaymentMethods,
   fetchProducts,
   fetchSiteSettings,
-  imageUrl,
   type Product,
 } from "@/lib/db";
 
@@ -21,6 +25,26 @@ export const Route = createFileRoute("/")({
 type ModalKey = "payment" | "about" | null;
 
 const LOGO_URL = logoAsset.url;
+
+const FALLBACK_IMAGES = [
+  cakeStrawberry, cakeVanilla, cakeMint,
+  cakeCupcake, cakeChocolate, cakeCheesecake,
+];
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+function fallbackFor(item: { id: string; name: string }): string {
+  return FALLBACK_IMAGES[hashString(item.id + item.name) % FALLBACK_IMAGES.length];
+}
+function buildMapEmbed(mapsUrl: string | null | undefined, address: string | null | undefined): string | null {
+  const isEmbeddable = mapsUrl && /google\.com\/maps\/embed/.test(mapsUrl);
+  if (isEmbeddable) return mapsUrl!;
+  if (address) return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+  return null;
+}
+
 
 function DigitalMenu() {
   const qc = useQueryClient();
