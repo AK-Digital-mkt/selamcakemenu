@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchCategories, fetchProducts, imageUrl, uploadProductImage, type Product } from "@/lib/db";
+import { fetchCategories, fetchProducts, signImagePath, uploadProductImage, type Product } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
   component: ProductsAdmin,
@@ -104,7 +104,7 @@ function ProductsAdmin() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((p) => {
           const cat = cats.data?.find((c) => c.id === p.category_id);
-          const url = imageUrl(p.image_url);
+          const url = p.image_display_url ?? null;
           return (
             <article key={p.id} className={`bg-white rounded-3xl overflow-hidden border border-[#f0d5dc] shadow-[0_8px_24px_-16px_rgba(233,30,99,0.15)] ${!p.available ? "opacity-75" : ""}`}>
               <div className="aspect-video bg-[#fef5f7] relative">
@@ -191,6 +191,19 @@ function ProductForm({ product, categories, onClose, onSaved }: {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const url = await signImagePath(values.image_path ?? null);
+      if (!cancelled) setPreview(url);
+    })();
+    return () => { cancelled = true; };
+  }, [values.image_path]);
+
+
+
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -247,7 +260,8 @@ function ProductForm({ product, categories, onClose, onSaved }: {
     }
   }
 
-  const preview = imageUrl(values.image_path ?? null);
+
+
 
   return (
     <div onClick={(e) => e.target === e.currentTarget && onClose()}

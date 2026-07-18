@@ -2,15 +2,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import heroFallback from "@/assets/hero-cake.jpg";
-import cakeFallback from "@/assets/cake-strawberry.jpg";
-import logoAsset from "@/assets/logo.ico.asset.json";
+import cakeStrawberry from "@/assets/cake-strawberry.jpg";
+import cakeVanilla from "@/assets/cake-vanilla.jpg";
+import cakeMint from "@/assets/cake-mint.jpg";
+import cakeCupcake from "@/assets/cake-cupcake.jpg";
+import cakeChocolate from "@/assets/cake-chocolate.jpg";
+import cakeCheesecake from "@/assets/cake-cheesecake.jpg";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchCategories,
   fetchPaymentMethods,
   fetchProducts,
   fetchSiteSettings,
-  imageUrl,
   type Product,
 } from "@/lib/db";
 
@@ -21,6 +25,26 @@ export const Route = createFileRoute("/")({
 type ModalKey = "payment" | "about" | null;
 
 const LOGO_URL = logoAsset.url;
+
+const FALLBACK_IMAGES = [
+  cakeStrawberry, cakeVanilla, cakeMint,
+  cakeCupcake, cakeChocolate, cakeCheesecake,
+];
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+function fallbackFor(item: { id: string; name: string }): string {
+  return FALLBACK_IMAGES[hashString(item.id + item.name) % FALLBACK_IMAGES.length];
+}
+function buildMapEmbed(mapsUrl: string | null | undefined, address: string | null | undefined): string | null {
+  const isEmbeddable = mapsUrl && /google\.com\/maps\/embed/.test(mapsUrl);
+  if (isEmbeddable) return mapsUrl!;
+  if (address) return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+  return null;
+}
+
 
 function DigitalMenu() {
   const qc = useQueryClient();
@@ -64,7 +88,7 @@ function DigitalMenu() {
     showToast(`${label} copied`);
   }
 
-  const heroImg = imageUrl(settings.data?.hero_image_url ?? null) ?? heroFallback;
+  const heroImg = settings.data?.hero_display_url ?? heroFallback;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa] pb-32">
@@ -173,7 +197,8 @@ function MenuList({ items, activeCat, categories, onOpen }: {
       {items.map((item, i) => {
         const showHeading = activeCat === "ALL" && item.category_id !== lastCat;
         if (showHeading) lastCat = item.category_id;
-        const url = imageUrl(item.image_url) ?? cakeFallback;
+        const url = item.image_display_url ?? fallbackFor(item);
+
         const soldOut = !item.available;
         return (
           <div key={item.id} className="contents">
@@ -345,11 +370,19 @@ function AboutModal({ settings, onClose }: any) {
           {phoneClean && <Row label="WhatsApp" text={s.whatsapp ?? s.phone} href={`https://wa.me/${phoneClean}`} />}
           {socials.map((sc) => <Row key={sc.key} label={sc.label} text={sc.label} href={s[sc.key]} />)}
         </div>
+        {(() => {
+          const embed = buildMapEmbed(s.maps_url, s.address);
+          if (!embed) return null;
+          return (
+            <div className="mt-5 rounded-2xl overflow-hidden h-48 border border-[#f0d5dc]">
+              <iframe title="Location" src={embed} width="100%" height="100%" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            </div>
+          );
+        })()}
         {s.maps_url && (
-          <div className="mt-5 rounded-2xl overflow-hidden h-48 border border-[#f0d5dc]">
-            <iframe title="Location" src={s.maps_url} width="100%" height="100%" style={{ border: 0 }} loading="lazy" />
-          </div>
+          <a href={s.maps_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex text-xs font-bold uppercase tracking-wider text-[#e88aab] hover:underline">Open in Google Maps →</a>
         )}
+
       </div>
     </ModalShell>
   );
@@ -366,7 +399,8 @@ function Row({ label, text, href }: { label: string; text: string; href?: string
 }
 
 function ItemModal({ item, onClose }: { item: Product; onClose: () => void }) {
-  const url = imageUrl(item.image_url) ?? cakeFallback;
+  const url = item.image_display_url ?? fallbackFor(item);
+
   const soldOut = !item.available;
   return (
     <ModalShell onClose={onClose}>

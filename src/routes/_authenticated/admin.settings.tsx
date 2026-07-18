@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchSiteSettings, uploadProductImage, imageUrl, type SiteSettings } from "@/lib/db";
+import { fetchSiteSettings, signImagePath, uploadProductImage, type SiteSettings } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsAdmin,
@@ -39,6 +39,8 @@ function SettingsAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const [tab, setTab] = useState<"brand" | "hero" | "contact" | "social" | "password">("brand");
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (data) {
@@ -65,7 +67,18 @@ function SettingsAdmin() {
     }
   }, [data]);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const url = await signImagePath(values?.hero_image_url ?? null);
+      if (!cancelled) setHeroPreview(url);
+    })();
+    return () => { cancelled = true; };
+  }, [values?.hero_image_url]);
+
   if (isLoading || !values || !data) return <div className="text-[#8b6b73]">Loading…</div>;
+
+
 
   const V = values;
   const set = <K extends keyof FormValues>(k: K, v: FormValues[K]) => setValues({ ...V, [k]: v });
@@ -92,11 +105,9 @@ function SettingsAdmin() {
     const path = await uploadProductImage(file);
     set("hero_image_url", path);
   }
-
-  const heroPreview = imageUrl(V.hero_image_url ?? null);
-
   return (
     <div>
+
       <h1 className="font-display text-3xl md:text-4xl font-bold text-[#2d2029]">Site settings</h1>
       <p className="mt-1 text-sm text-[#8b6b73]">Every change here updates the public site instantly.</p>
 
