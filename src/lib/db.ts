@@ -46,7 +46,9 @@ export type SiteSettings = {
   hero_title: string;
   hero_subtitle: string;
   hero_image_url: string | null;
+  hero_display_url?: string | null;
   logo_url: string | null;
+
   address: string;
   phone: string;
   whatsapp: string | null;
