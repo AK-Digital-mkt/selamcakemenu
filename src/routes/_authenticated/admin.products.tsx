@@ -260,7 +260,8 @@ function ProductForm({ product, categories, onClose, onSaved }: {
     }
   }
 
-  const preview = imageUrl(values.image_path ?? null);
+
+
 
   return (
     <div onClick={(e) => e.target === e.currentTarget && onClose()}
