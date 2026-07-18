@@ -39,6 +39,8 @@ function SettingsAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const [tab, setTab] = useState<"brand" | "hero" | "contact" | "social" | "password">("brand");
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (data) {
