@@ -193,9 +193,16 @@ function ProductForm({ product, categories, onClose, onSaved }: {
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  // Resolve the current image_path into a signed preview URL whenever it changes.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useState(() => { void 0; });
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const url = await signImagePath(values.image_path ?? null);
+      if (!cancelled) setPreview(url);
+    })();
+    return () => { cancelled = true; };
+  }, [values.image_path]);
+
+
 
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
