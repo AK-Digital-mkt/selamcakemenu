@@ -72,6 +72,17 @@ export async function fetchCategories(): Promise<Category[]> {
   return (data ?? []) as Category[];
 }
 
+const SIGNED_URL_TTL = 60 * 60 * 24 * 7; // 7 days
+
+export async function signImagePath(path: string | null | undefined): Promise<string | null> {
+  if (!path) return null;
+  if (path.startsWith("http") || path.startsWith("/")) return path;
+  const { data } = await supabase.storage
+    .from("product-images")
+    .createSignedUrl(path, SIGNED_URL_TTL);
+  return data?.signedUrl ?? null;
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
@@ -79,7 +90,9 @@ export async function fetchProducts(): Promise<Product[]> {
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as Product[];
+  const rows = (data ?? []) as Product[];
+  const signed = await Promise.all(rows.map((p) => signImagePath(p.image_url)));
+  return rows.map((p, i) => ({ ...p, image_display_url: signed[i] }));
 }
 
 export async function fetchPaymentMethods(): Promise<PaymentMethod[]> {
@@ -98,15 +111,19 @@ export async function fetchSiteSettings(): Promise<SiteSettings | null> {
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as SiteSettings | null;
+  if (!data) return null;
+  const s = data as SiteSettings;
+  s.hero_display_url = await signImagePath(s.hero_image_url);
+  return s;
 }
 
-export function imageUrl(path: string | null): string | null {
+/** Sync helper for absolute URLs; storage paths return null and callers should use *_display_url. */
+export function imageUrl(path: string | null | undefined): string | null {
   if (!path) return null;
-  if (path.startsWith("http")) return path;
-  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-  return data.publicUrl;
+  if (path.startsWith("http") || path.startsWith("/")) return path;
+  return null;
 }
+
 
 export async function uploadProductImage(file: File): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
