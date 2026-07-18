@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchCategories, fetchProducts, imageUrl, uploadProductImage, type Product } from "@/lib/db";
+import { fetchCategories, fetchProducts, signImagePath, uploadProductImage, type Product } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
   component: ProductsAdmin,
