@@ -95,9 +95,17 @@ function SettingsAdmin() {
     set("hero_image_url", path);
   }
 
-  const heroPreview = imageUrl(V.hero_image_url ?? null);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const url = await signImagePath(V?.hero_image_url ?? null);
+      if (!cancelled) setHeroPreview(url);
+    })();
+    return () => { cancelled = true; };
+  }, [V?.hero_image_url]);
 
   return (
+
     <div>
       <h1 className="font-display text-3xl md:text-4xl font-bold text-[#2d2029]">Site settings</h1>
       <p className="mt-1 text-sm text-[#8b6b73]">Every change here updates the public site instantly.</p>
