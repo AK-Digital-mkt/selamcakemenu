@@ -88,7 +88,7 @@ function DigitalMenu() {
     showToast(`${label} copied`);
   }
 
-  const heroImg = imageUrl(settings.data?.hero_image_url ?? null) ?? heroFallback;
+  const heroImg = settings.data?.hero_display_url ?? heroFallback;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa] pb-32">
