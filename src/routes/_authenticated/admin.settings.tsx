@@ -67,7 +67,18 @@ function SettingsAdmin() {
     }
   }, [data]);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const url = await signImagePath(values?.hero_image_url ?? null);
+      if (!cancelled) setHeroPreview(url);
+    })();
+    return () => { cancelled = true; };
+  }, [values?.hero_image_url]);
+
   if (isLoading || !values || !data) return <div className="text-[#8b6b73]">Loading…</div>;
+
+
 
   const V = values;
   const set = <K extends keyof FormValues>(k: K, v: FormValues[K]) => setValues({ ...V, [k]: v });
