@@ -17,12 +17,14 @@ export type Product = {
   price: number;
   category_id: string | null;
   image_url: string | null;
+  image_display_url?: string | null;
   gallery: string[];
   emoji: string;
   available: boolean;
   featured: boolean;
   sort_order: number;
 };
+
 
 export type PaymentMethod = {
   id: string;
