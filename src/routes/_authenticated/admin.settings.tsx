@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchSiteSettings, uploadProductImage, imageUrl, type SiteSettings } from "@/lib/db";
+import { fetchSiteSettings, signImagePath, uploadProductImage, type SiteSettings } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsAdmin,
