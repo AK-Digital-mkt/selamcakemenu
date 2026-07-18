@@ -391,7 +391,8 @@ function Row({ label, text, href }: { label: string; text: string; href?: string
 }
 
 function ItemModal({ item, onClose }: { item: Product; onClose: () => void }) {
-  const url = imageUrl(item.image_url) ?? cakeFallback;
+  const url = item.image_display_url ?? fallbackFor(item);
+
   const soldOut = !item.available;
   return (
     <ModalShell onClose={onClose}>
