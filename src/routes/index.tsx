@@ -304,7 +304,7 @@ function ModalShell({ children, onClose }: any) {
   return (
     <div onClick={(e) => e.target === e.currentTarget && onClose()}
       className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-up" style={{ animationDuration: "0.25s" }}>
-      <div className="w-full sm:max-w-[480px] sm:mb-6 bg-white rounded-t-[28px] sm:rounded-[28px] border border-[#f0d5dc] shadow-[0_-8px_40px_rgba(233,30,99,0.15)] max-h-[90vh] overflow-y-auto">
+      <div className="w-full sm:max-w-[560px] md:max-w-[640px] sm:mb-6 bg-white rounded-t-[28px] sm:rounded-[28px] border border-[#f0d5dc] shadow-[0_-8px_40px_rgba(233,30,99,0.15)] max-h-[90vh] overflow-y-auto">
         {children}
       </div>
     </div>
