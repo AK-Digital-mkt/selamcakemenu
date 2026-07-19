@@ -92,7 +92,7 @@ function DigitalMenu() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa] pb-32">
-      <div className="mx-auto max-w-[520px] relative">
+      <div className="mx-auto w-full max-w-[520px] sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl relative">
         <Hero settings={settings.data} heroImg={heroImg} />
         <CategoryPills categories={visibleCats} activeCat={activeCat} setActiveCat={setActiveCat} />
         <MenuList items={filtered} activeCat={activeCat} categories={visibleCats} onOpen={setOpenItem} />
