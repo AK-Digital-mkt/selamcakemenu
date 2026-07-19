@@ -134,16 +134,16 @@ function Hero({ settings, heroImg }: { settings: any; heroImg: string }) {
   }, []);
 
   return (
-    <section className="relative h-[380px] overflow-hidden">
+    <section className="relative h-[380px] sm:h-[440px] md:h-[500px] lg:h-[560px] overflow-hidden sm:rounded-b-[32px]">
       <div ref={bgRef} className="absolute inset-0">
         <img src={heroImg} alt="Signature cake" className="w-full h-full object-cover" />
       </div>
       <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(250,218,221,0.55) 55%, rgba(221,248,248,0.85) 100%)" }} />
 
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+      <div className="absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 flex justify-between items-center z-10">
         <div className="flex items-center gap-2 glass px-3 py-2 rounded-full">
-          <img src={LOGO_URL} alt="" className="w-5 h-5 rounded-sm" />
-          <span className="font-display font-semibold text-sm">{settings?.shop_name ?? "Selam"}</span>
+          <img src={LOGO_URL} alt="" className="w-5 h-5 sm:w-6 sm:h-6 rounded-sm" />
+          <span className="font-display font-semibold text-sm sm:text-base">{settings?.shop_name ?? "Selam"}</span>
         </div>
         <Link to="/auth" className="glass w-11 h-11 rounded-full flex items-center justify-center hover:scale-105 transition-transform" aria-label="Admin">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#8b6b73]">
@@ -152,15 +152,15 @@ function Hero({ settings, heroImg }: { settings: any; heroImg: string }) {
         </Link>
       </div>
 
-      <div className="absolute bottom-8 left-6 right-6 z-10">
+      <div className="absolute bottom-8 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10 z-10 max-w-3xl">
         <div className="inline-flex items-center gap-2 glass px-3.5 py-1.5 rounded-full text-xs font-semibold mb-3">
           <span className="w-2 h-2 rounded-full bg-[#f5a1ad] animate-pulse shadow-[0_0_10px_#f5a1ad]" />
           {settings?.hero_subtitle ?? "Handcrafted with love"}
         </div>
-        <h1 className="font-display text-4xl md:text-5xl font-semibold leading-[1.05] tracking-tight text-[#2d2029]">
+        <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-[#2d2029]">
           {settings?.hero_title ?? "Selam Cake Shop"}
         </h1>
-        <p className="mt-2 text-sm text-[#5a4a52] font-medium">{settings?.tagline ?? "Sweetness, delicately made."}</p>
+        <p className="mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-[#5a4a52] font-medium">{settings?.tagline ?? "Sweetness, delicately made."}</p>
       </div>
     </section>
   );
