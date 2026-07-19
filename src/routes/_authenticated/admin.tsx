@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { isAdmin } from "@/lib/db";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -16,7 +17,7 @@ const nav: { to: string; label: string; exact?: boolean }[] = [
   { to: "/admin/settings", label: "Site Settings" },
 ];
 
-const LOGO_URL = "/__l5e/assets-v1/e7c6d342-2ac9-4439-8921-b15eb5a18f8b/logo.ico";
+const LOGO_URL = logoAsset.url;
 
 function AdminLayout() {
   const navigate = useNavigate();
