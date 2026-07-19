@@ -203,7 +203,7 @@ function MenuList({ items, activeCat, categories, onOpen }: {
         return (
           <div key={item.id} className="contents">
             {showHeading && (
-              <div className="col-span-2 flex items-center gap-2 pt-4 pb-1 text-xs font-bold uppercase tracking-[1.5px] text-[#8b6b73]">
+              <div className="col-span-2 sm:col-span-3 lg:col-span-4 flex items-center gap-2 pt-4 pb-1 text-xs font-bold uppercase tracking-[1.5px] text-[#8b6b73]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#f5a1ad]" />
                 {catName(item.category_id)}
               </div>
