@@ -193,7 +193,7 @@ function MenuList({ items, activeCat, categories, onOpen }: {
   const catName = (id: string | null) => categories.find((c) => c.id === id)?.name ?? "Other";
 
   return (
-    <div className="px-4 pt-2 grid grid-cols-2 gap-4">
+    <div className="px-4 sm:px-6 md:px-8 pt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
       {items.map((item, i) => {
         const showHeading = activeCat === "ALL" && item.category_id !== lastCat;
         if (showHeading) lastCat = item.category_id;
