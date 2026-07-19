@@ -407,7 +407,7 @@ function ItemModal({ item, onClose }: { item: Product; onClose: () => void }) {
       <div className="relative">
         <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm">×</button>
         <div className="relative">
-          <img src={url} alt={item.name} className={`w-full h-64 object-cover ${soldOut ? "grayscale-[0.5] opacity-80" : ""}`} />
+          <img src={url} alt={item.name} className={`w-full h-64 sm:h-80 md:h-96 object-cover ${soldOut ? "grayscale-[0.5] opacity-80" : ""}`} />
           {soldOut && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/25">
               <span className="px-4 py-2 rounded-lg text-sm font-extrabold tracking-[2px] text-white bg-red-600 shadow-lg">SOLD OUT</span>
