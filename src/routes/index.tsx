@@ -92,7 +92,7 @@ function DigitalMenu() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa] pb-32">
-      <div className="mx-auto max-w-[520px] relative">
+      <div className="mx-auto w-full max-w-[520px] sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl relative">
         <Hero settings={settings.data} heroImg={heroImg} />
         <CategoryPills categories={visibleCats} activeCat={activeCat} setActiveCat={setActiveCat} />
         <MenuList items={filtered} activeCat={activeCat} categories={visibleCats} onOpen={setOpenItem} />
@@ -134,16 +134,16 @@ function Hero({ settings, heroImg }: { settings: any; heroImg: string }) {
   }, []);
 
   return (
-    <section className="relative h-[380px] overflow-hidden">
+    <section className="relative h-[380px] sm:h-[440px] md:h-[500px] lg:h-[560px] overflow-hidden sm:rounded-b-[32px]">
       <div ref={bgRef} className="absolute inset-0">
         <img src={heroImg} alt="Signature cake" className="w-full h-full object-cover" />
       </div>
       <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(250,218,221,0.55) 55%, rgba(221,248,248,0.85) 100%)" }} />
 
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+      <div className="absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 flex justify-between items-center z-10">
         <div className="flex items-center gap-2 glass px-3 py-2 rounded-full">
-          <img src={LOGO_URL} alt="" className="w-5 h-5 rounded-sm" />
-          <span className="font-display font-semibold text-sm">{settings?.shop_name ?? "Selam"}</span>
+          <img src={LOGO_URL} alt="" className="w-5 h-5 sm:w-6 sm:h-6 rounded-sm" />
+          <span className="font-display font-semibold text-sm sm:text-base">{settings?.shop_name ?? "Selam"}</span>
         </div>
         <Link to="/auth" className="glass w-11 h-11 rounded-full flex items-center justify-center hover:scale-105 transition-transform" aria-label="Admin">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#8b6b73]">
@@ -152,15 +152,15 @@ function Hero({ settings, heroImg }: { settings: any; heroImg: string }) {
         </Link>
       </div>
 
-      <div className="absolute bottom-8 left-6 right-6 z-10">
+      <div className="absolute bottom-8 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10 z-10 max-w-3xl">
         <div className="inline-flex items-center gap-2 glass px-3.5 py-1.5 rounded-full text-xs font-semibold mb-3">
           <span className="w-2 h-2 rounded-full bg-[#f5a1ad] animate-pulse shadow-[0_0_10px_#f5a1ad]" />
           {settings?.hero_subtitle ?? "Handcrafted with love"}
         </div>
-        <h1 className="font-display text-4xl md:text-5xl font-semibold leading-[1.05] tracking-tight text-[#2d2029]">
+        <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-[#2d2029]">
           {settings?.hero_title ?? "Selam Cake Shop"}
         </h1>
-        <p className="mt-2 text-sm text-[#5a4a52] font-medium">{settings?.tagline ?? "Sweetness, delicately made."}</p>
+        <p className="mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-[#5a4a52] font-medium">{settings?.tagline ?? "Sweetness, delicately made."}</p>
       </div>
     </section>
   );
@@ -168,7 +168,7 @@ function Hero({ settings, heroImg }: { settings: any; heroImg: string }) {
 
 function CategoryPills({ categories, activeCat, setActiveCat }: any) {
   return (
-    <div className="flex gap-2.5 overflow-x-auto px-4 pt-5 pb-2" style={{ scrollbarWidth: "none" }}>
+    <div className="flex gap-2.5 overflow-x-auto px-4 sm:px-6 md:px-8 pt-5 pb-2 sm:flex-wrap sm:overflow-x-visible" style={{ scrollbarWidth: "none" }}>
       <style>{`div::-webkit-scrollbar{display:none}`}</style>
       {[{ id: "ALL", name: "All" }, ...categories].map((c: any) => {
         const active = activeCat === c.id;
@@ -193,7 +193,7 @@ function MenuList({ items, activeCat, categories, onOpen }: {
   const catName = (id: string | null) => categories.find((c) => c.id === id)?.name ?? "Other";
 
   return (
-    <div className="px-4 pt-2 grid grid-cols-2 gap-4">
+    <div className="px-4 sm:px-6 md:px-8 pt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
       {items.map((item, i) => {
         const showHeading = activeCat === "ALL" && item.category_id !== lastCat;
         if (showHeading) lastCat = item.category_id;
@@ -203,7 +203,7 @@ function MenuList({ items, activeCat, categories, onOpen }: {
         return (
           <div key={item.id} className="contents">
             {showHeading && (
-              <div className="col-span-2 flex items-center gap-2 pt-4 pb-1 text-xs font-bold uppercase tracking-[1.5px] text-[#8b6b73]">
+              <div className="col-span-2 sm:col-span-3 lg:col-span-4 flex items-center gap-2 pt-4 pb-1 text-xs font-bold uppercase tracking-[1.5px] text-[#8b6b73]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#f5a1ad]" />
                 {catName(item.category_id)}
               </div>
@@ -304,7 +304,7 @@ function ModalShell({ children, onClose }: any) {
   return (
     <div onClick={(e) => e.target === e.currentTarget && onClose()}
       className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-up" style={{ animationDuration: "0.25s" }}>
-      <div className="w-full sm:max-w-[480px] sm:mb-6 bg-white rounded-t-[28px] sm:rounded-[28px] border border-[#f0d5dc] shadow-[0_-8px_40px_rgba(233,30,99,0.15)] max-h-[90vh] overflow-y-auto">
+      <div className="w-full sm:max-w-[560px] md:max-w-[640px] sm:mb-6 bg-white rounded-t-[28px] sm:rounded-[28px] border border-[#f0d5dc] shadow-[0_-8px_40px_rgba(233,30,99,0.15)] max-h-[90vh] overflow-y-auto">
         {children}
       </div>
     </div>
@@ -407,7 +407,7 @@ function ItemModal({ item, onClose }: { item: Product; onClose: () => void }) {
       <div className="relative">
         <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm">×</button>
         <div className="relative">
-          <img src={url} alt={item.name} className={`w-full h-64 object-cover ${soldOut ? "grayscale-[0.5] opacity-80" : ""}`} />
+          <img src={url} alt={item.name} className={`w-full h-64 sm:h-80 md:h-96 object-cover ${soldOut ? "grayscale-[0.5] opacity-80" : ""}`} />
           {soldOut && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/25">
               <span className="px-4 py-2 rounded-lg text-sm font-extrabold tracking-[2px] text-white bg-red-600 shadow-lg">SOLD OUT</span>
