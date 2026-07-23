@@ -91,7 +91,7 @@ function DigitalMenu() {
   const heroImg = settings.data?.hero_display_url ?? heroFallback;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa] pb-32">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#fef5f7] to-[#f0fafa]">
       <div className="mx-auto w-full max-w-[520px] sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl relative">
         <Hero settings={settings.data} heroImg={heroImg} />
         <CategoryPills categories={visibleCats} activeCat={activeCat} setActiveCat={setActiveCat} />
@@ -103,8 +103,6 @@ function DigitalMenu() {
           </div>
         )}
       </div>
-
-      <BottomNav onNav={(k: ModalKey) => setModal(k)} active={modal} />
 
       {modal === "payment" && (
         <PaymentModal methods={pays.data ?? []} onClose={() => setModal(null)} onCopy={copy} />
@@ -270,27 +268,6 @@ function NavIcon({ name }: { name: "pay" | "home" | "info" }) {
   return (<svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>);
 }
 
-function BottomNav({ onNav, active }: { onNav: (k: ModalKey) => void; active: ModalKey }) {
-  const btn = (key: "payment" | "about", icon: "pay" | "info", label: string) => (
-    <button onClick={() => onNav(key)}
-      className={`relative flex flex-col items-center justify-center gap-1 px-5 h-14 min-w-[64px] rounded-2xl transition-all ${
-        active === key ? "text-[#e88aab] bg-[#fadadd]/40" : "text-[#8b6b73] hover:text-[#2d2029]"
-      }`} aria-label={label}>
-      <NavIcon name={icon} />
-      <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
-    </button>
-  );
-
-  return (
-    <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 glass rounded-[28px] px-4 py-2 flex items-center gap-2 shadow-[0_12px_36px_-8px_rgba(233,30,99,0.25)]">
-      <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-[0_8px_24px_-4px_rgba(233,30,99,0.5)] hover:scale-110 hover:-translate-y-1 transition-all"
-        style={{ background: "linear-gradient(135deg, #f5a1ad 0%, #e88aab 100%)" }} aria-label="Home">
-        <NavIcon name="home" />
-      </button>
-    </nav>
-  );
-}
 
 
 function ModalShell({ children, onClose }: any) {
