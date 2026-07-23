@@ -283,16 +283,15 @@ function BottomNav({ onNav, active }: { onNav: (k: ModalKey) => void; active: Mo
 
   return (
     <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 glass rounded-[28px] px-4 py-2 flex items-center gap-2 shadow-[0_12px_36px_-8px_rgba(233,30,99,0.25)]">
-      {btn("payment", "pay", "Pay")}
       <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-[0_8px_24px_-4px_rgba(233,30,99,0.5)] hover:scale-110 hover:-translate-y-1 transition-all"
         style={{ background: "linear-gradient(135deg, #f5a1ad 0%, #e88aab 100%)" }} aria-label="Home">
         <NavIcon name="home" />
       </button>
-      {btn("about", "info", "Info")}
     </nav>
   );
 }
+
 
 function ModalShell({ children, onClose }: any) {
   useEffect(() => {
