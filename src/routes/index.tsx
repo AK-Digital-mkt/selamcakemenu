@@ -208,7 +208,7 @@ function CategoryPills({ categories, activeCat, setActiveCat }: any) {
 function MenuList({ items, activeCat, categories, onOpen }: {
   items: Product[]; activeCat: string; categories: any[]; onOpen: (p: Product) => void;
 }) {
-  let lastCat: string | null = null;
+  let lastCat: string | null | undefined = undefined;
   const catName = (id: string | null) => categories.find((c) => c.id === id)?.name ?? "Other";
 
   return (
