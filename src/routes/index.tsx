@@ -237,7 +237,7 @@ function MenuList({ items, activeCat, categories, onOpen }: {
               }`}
               style={{ animationDelay: `${i * 0.04}s`, animationFillMode: "both" }}>
               <div className="relative overflow-hidden rounded-2xl aspect-square">
-                <img src={url} alt={item.name} loading="lazy" className={`w-full h-full object-cover transition-transform duration-500 ${!soldOut && "group-hover:scale-105"}`} />
+                <img src={url} alt={item.name} loading="lazy" onError={(e) => { const el = e.currentTarget; const fb = fallbackFor(item); if (el.src !== fb) el.src = fb; }} className={`w-full h-full object-cover transition-transform duration-500 ${!soldOut && "group-hover:scale-105"}`} />
                 {soldOut && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/25">
                     <span className="px-3 py-1.5 rounded-md text-[11px] font-extrabold tracking-[1.5px] text-white bg-red-600 shadow-lg">
@@ -404,7 +404,7 @@ function ItemModal({ item, onClose }: { item: Product; onClose: () => void }) {
       <div className="relative">
         <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm">×</button>
         <div className="relative">
-          <img src={url} alt={item.name} className={`w-full h-64 sm:h-80 md:h-96 object-cover ${soldOut ? "grayscale-[0.5] opacity-80" : ""}`} />
+          <img src={url} alt={item.name} onError={(e) => { const el = e.currentTarget; const fb = fallbackFor(item); if (el.src !== fb) el.src = fb; }} className={`w-full h-64 sm:h-80 md:h-96 object-cover ${soldOut ? "grayscale-[0.5] opacity-80" : ""}`} />
           {soldOut && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/25">
               <span className="px-4 py-2 rounded-lg text-sm font-extrabold tracking-[2px] text-white bg-red-600 shadow-lg">SOLD OUT</span>
@@ -430,7 +430,7 @@ function ItemModal({ item, onClose }: { item: Product; onClose: () => void }) {
 
 function Toast({ msg }: { msg: string | null }) {
   return (
-    <div className={`fixed bottom-28 left-1/2 -translate-x-1/2 z-[300] px-6 py-3 rounded-full text-white font-bold text-sm flex items-center gap-2 shadow-[0_12px_28px_-6px_rgba(233,30,99,0.5)] transition-all duration-300 ${
+    <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[300] px-6 py-3 rounded-full text-white font-bold text-sm flex items-center gap-2 shadow-[0_12px_28px_-6px_rgba(233,30,99,0.5)] transition-all duration-300 ${
       msg ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none"
     }`} style={{ background: "linear-gradient(135deg, #f5a1ad 0%, #e88aab 100%)" }}>
       <span>{msg}</span>
