@@ -68,12 +68,21 @@ function DigitalMenu() {
   const [openItem, setOpenItem] = useState<Product | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  // Realtime: reflect availability changes instantly
+  // Realtime: reflect admin changes instantly
   useEffect(() => {
     const channel = supabase
-      .channel("public:products")
+      .channel("public:menu")
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => {
         qc.invalidateQueries({ queryKey: ["products"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, () => {
+        qc.invalidateQueries({ queryKey: ["categories"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "payment_methods" }, () => {
+        qc.invalidateQueries({ queryKey: ["payments"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, () => {
+        qc.invalidateQueries({ queryKey: ["site-settings"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -82,12 +91,14 @@ function DigitalMenu() {
   const visibleCats = useMemo(() => (cats.data ?? []).filter((c) => c.visible), [cats.data]);
   const allProducts = products.data ?? [];
 
-  const filtered = useMemo(
-    () => (activeCat === "ALL"
-      ? allProducts
-      : allProducts.filter((p) => p.category_id === activeCat)),
-    [allProducts, activeCat]
-  );
+  // Group by category (in category order) so headings never repeat or mis-group.
+  const filtered = useMemo(() => {
+    if (activeCat !== "ALL") return allProducts.filter((p) => p.category_id === activeCat);
+    const order = new Map(visibleCats.map((c, i) => [c.id, i] as const));
+    const rank = (id: string | null) =>
+      id != null && order.has(id) ? (order.get(id) as number) : Number.MAX_SAFE_INTEGER;
+    return [...allProducts].sort((a, b) => rank(a.category_id) - rank(b.category_id));
+  }, [allProducts, activeCat, visibleCats]);
 
   function showToast(msg: string) {
     setToast(msg);
