@@ -20,6 +20,16 @@ import {
 
 export const Route = createFileRoute("/")({
   component: DigitalMenu,
+  head: () => ({
+    meta: [
+      { title: "Selam Cakes Menu — Cakes, Coffee, Shakes & Mojitos" },
+      { name: "description", content: "Browse the Selam Cakes digital menu: handcrafted cakes, tiramisu, coffee, milkshakes and mojitos with live prices and availability." },
+      { property: "og:title", content: "Selam Cakes Menu — Cakes, Coffee, Shakes & Mojitos" },
+      { property: "og:description", content: "Handcrafted cakes, coffee, milkshakes and mojitos — live prices and availability." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
 
 type ModalKey = "payment" | "about" | null;
