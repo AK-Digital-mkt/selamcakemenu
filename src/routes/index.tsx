@@ -237,7 +237,7 @@ function MenuList({ items, activeCat, categories, onOpen }: {
               }`}
               style={{ animationDelay: `${i * 0.04}s`, animationFillMode: "both" }}>
               <div className="relative overflow-hidden rounded-2xl aspect-square">
-                <img src={url} alt={item.name} loading="lazy" onError={(e) => { const el = e.currentTarget; const fb = fallbackFor(item); if (el.src !== fb) el.src = fb; }} className={`w-full h-full object-cover transition-transform duration-500 ${!soldOut && "group-hover:scale-105"}`} />
+                <img src={url} alt={item.name} loading="lazy" onError={(e) => { const el = e.currentTarget; const fb = fallbackFor(item); if (el.src !== fb) el.src = fb; }} className={`w-full h-full object-cover transition-transform duration-500 ${soldOut ? "" : "group-hover:scale-105"}`} />
                 {soldOut && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/25">
                     <span className="px-3 py-1.5 rounded-md text-[11px] font-extrabold tracking-[1.5px] text-white bg-red-600 shadow-lg">
