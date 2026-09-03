@@ -187,8 +187,8 @@ function Hero({ settings, heroImg }: { settings: any; heroImg: string }) {
 
 function CategoryPills({ categories, activeCat, setActiveCat }: any) {
   return (
-    <div className="flex gap-2.5 overflow-x-auto px-4 sm:px-6 md:px-8 pt-5 pb-2 sm:flex-wrap sm:overflow-x-visible" style={{ scrollbarWidth: "none" }}>
-      <style>{`div::-webkit-scrollbar{display:none}`}</style>
+    <div className="cat-pills flex gap-2.5 overflow-x-auto px-4 sm:px-6 md:px-8 pt-5 pb-2 sm:flex-wrap sm:overflow-x-visible" style={{ scrollbarWidth: "none" }}>
+      <style>{`.cat-pills::-webkit-scrollbar{display:none}`}</style>
       {[{ id: "ALL", name: "All" }, ...categories].map((c: any) => {
         const active = activeCat === c.id;
         return (
